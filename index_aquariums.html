@@ -10,7 +10,7 @@
         
         <canvas></canvas>
 
-        <input id="numberOfFish" type="number" placeholder="Nb de poisson"/>
+        <input onchange="updateFishNumber()"  id="numberOfFish" type="number" placeholder="Nb de poisson"/>
         <button id="play" onclick="beginGame()">Jouer</button>
         <button hidden="true" id="stop" onclick="stop()">Stop</button>
         <button hidden="true" id="add"  onclick="addFish()"> Add fish </button>

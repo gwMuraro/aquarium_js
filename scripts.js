@@ -1,4 +1,4 @@
-var CLOCK_TIME = 30
+var CLOCK_TIME = 35
 var MOVING_TIME = 1000
 var VELOCITY = 1
 var LAYOUT_MAX_WIDTH  = 600
@@ -9,9 +9,9 @@ var LAYOUT_POSITION_LEFT = 50
 var LAYOUT_POSITION_TOP  = 50
 
 var interv ; 
-var fishes = []
 var ctx ;
-
+var fishes = []
+var grasses = []
 
 var DIRECTIONS = {
     "0": {"id":"left", "coef_x":-1, "coef_y": 0}, 
@@ -25,10 +25,13 @@ var DIRECTIONS = {
 }
 
 function getRandomDirection(){
+
     return random(0,7); 
+
 }
 
 function getDirectionVector(forceDirection=null) {
+    
     var pile = []
     if(forceDirection != null) {
         var direct = forceDirection[random(0,forceDirection.length-1)]
@@ -46,6 +49,7 @@ function getDirectionVector(forceDirection=null) {
         }
     }
     return pile ;
+
 }
 
 function deplacement(pixel) {
@@ -53,6 +57,7 @@ function deplacement(pixel) {
 }
 
 function move(x, y, vector) {
+    
     if (vector.length == 0 ) {
         vector = getDirectionVector() ; 
     } 
@@ -83,10 +88,12 @@ function move(x, y, vector) {
     
     // setting new X and Y positions 
     return [new_x, new_y, direction, vector]
+
 }
 
 
 function initiateGame(){
+    
     // Loading the models : 
     var nbFish =  [null, "", , "0", 0].includes(document.getElementById('numberOfFish').value) ? 1 : document.getElementById('numberOfFish').value
     console.log(document.getElementById('numberOfFish').value)
@@ -105,18 +112,31 @@ function initiateGame(){
 
     ctx = canvas.getContext("2d") ; 
 
+    // Generate grasses 
+    for (var i = 0 ; i < 75 ; i++){
+        var origin = i*random(5, 10)
+        
+        grass = {
+            "origin":origin,
+            "current_origin":origin+random(1,5),
+            "x_end1":origin,
+            "x_end2":origin+2,
+            "increment":0.5 + Math.random()
+        }
+        grasses.push(grass) ;
+    }
+
     // setting the buttons attribute 
     document.getElementById("play").hidden = true 
-    document.getElementById("stop").hidden = false 
-    document.getElementById("add").hidden =  false
-    document.getElementById("numberOfFish").readonly = "readonly"
+    document.getElementById("stop").hidden = true 
+    document.getElementById("add").hidden =  true
+    
 }
 
 function drawFish(x, y, direction) {
-    ctx.fillStyle = "#AB1AB1" ; 
     
-    ctx.beginPath() ;
-    
+    ctx.fillStyle = "orange" ; 
+   
     if (["1", "5", "7"].includes(direction)) {
         ctx.fillText("><°>", x, y);
     } if (["0", "4", "6"].includes(direction)) {
@@ -124,15 +144,42 @@ function drawFish(x, y, direction) {
     } if (["2", "3"].includes(direction)) {
         ctx.fillText("<°><", x, y)
     }
-    // ctx.fillText("*", x, y) // for statistic purpose 
-    ctx.closePath() ;
     
 } ;
--10
+
+function drawGrass(origin, x1, x2) {
+
+    ctx.beginPath();
+    ctx.fillStyle = "#00AA00"   
+    ctx.moveTo(origin, LAYOUT_MAX_HEIGHT-150);
+    ctx.lineTo(x1, LAYOUT_MAX_HEIGHT);
+    ctx.lineTo(x2, LAYOUT_MAX_HEIGHT);
+    ctx.fill();
+
+}
+
+function drawBackground(){
+    
+    var gradient = ctx.createLinearGradient(0,0,0,LAYOUT_MAX_HEIGHT-10)
+    gradient.addColorStop(0,"blue")
+    gradient.addColorStop(1,"darkblue")
+    ctx.fillStyle = gradient
+    ctx.fillRect(LAYOUT_MIN_WIDTH, LAYOUT_MIN_HEIGHT, LAYOUT_MAX_WIDTH, LAYOUT_MAX_HEIGHT)
+    
+}
+
 function clockTime(){
     // clear 
     ctx.clearRect(LAYOUT_MIN_WIDTH,LAYOUT_MIN_HEIGHT,LAYOUT_MAX_WIDTH, LAYOUT_MAX_HEIGHT)
     
+    // Draw background 
+    drawBackground() ;
+    
+    // draw grass 
+    for (const grass of grasses){
+        drawGrass(Math.floor(grass["current_origin"]), grass["x_end1"], grass["x_end2"] )    
+    }
+
     // draw each fishes
     for (const fish of fishes){
         // set the next move of the fish 
@@ -146,6 +193,7 @@ function clockTime(){
         // draw the fish 
         drawFish(fish["x"], fish["y"], direction) ;
     }
+    // ctx.closePath() ;
 }
 
 function random(min, max){return Math.floor(Math.random() * (max - min + 1) + min)}
@@ -161,6 +209,21 @@ function addFish(){
     document.getElementById("numberOfFish").value = fishes.length
 }
 
+function updateFishNumber() {
+    var nbCurrentFishes = fishes.length
+    var nbWantedFishes  = document.getElementById("numberOfFish").value
+
+    if (nbCurrentFishes > nbWantedFishes) {
+        for (var i = nbCurrentFishes ; i > nbWantedFishes ; i--) {
+            fishes.pop() ;
+        }
+    } else if (nbCurrentFishes < nbWantedFishes) {
+        for (var i = nbCurrentFishes ; i < nbWantedFishes ; i++) {
+            addFish() ;
+        }
+    }
+}
+
 function beginGame(debug=0){
  
     initiateGame() ;
@@ -173,5 +236,5 @@ function beginGame(debug=0){
             i+= 1 ;
 
         }, CLOCK_TIME)
-    } // Adding a fish 
+    } 
 }
