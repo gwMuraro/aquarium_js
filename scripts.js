@@ -24,6 +24,15 @@ var DIRECTIONS = {
     "7": {"id":"bottom-right", "coef_x": 1, "coef_y": 1}
 }
 
+var FISH_COLORS = [
+    "#FFAAAA", // gold
+    "#FFFFFF", // dark green
+    "#FF5939", // dark orange
+    "#FF2222", // dark purple
+    "#2D0807", // marron
+    "#000000"  // dark pink/red
+]
+
 function getRandomDirection(){
 
     return random(0,7); 
@@ -40,7 +49,7 @@ function getDirectionVector(forceDirection=null) {
         }
     }
     else {
-        for (var i = 0 ; i < MOVING_TIME ; i++) {
+        for (var i = 0 ; i < MOVING_TIME ; i++) {
             current_direction = ""+getRandomDirection() ;
             for (var j = 0 ; j < random(100,400) ; j++) {
                 pile.push(current_direction); 
@@ -97,9 +106,8 @@ function initiateGame(){
     // Loading the models : 
     var nbFish =  [null, "", , "0", 0].includes(document.getElementById('numberOfFish').value) ? 1 : document.getElementById('numberOfFish').value
     console.log(document.getElementById('numberOfFish').value)
-    for (var ct = 0 ; ct < nbFish ; ct++){
-        addFish()
-    }
+    
+    updateFishNumber()
 
     // Getting canvas and doing the macro parameters 
     const canvas = document.querySelector("canvas") ; 
@@ -133,9 +141,9 @@ function initiateGame(){
     
 }
 
-function drawFish(x, y, direction) {
+function drawFish(x, y, direction, color) {
     
-    ctx.fillStyle = "orange" ; 
+    ctx.fillStyle = color ; 
    
     if (["1", "5", "7"].includes(direction)) {
         ctx.fillText("><°>", x, y);
@@ -161,8 +169,8 @@ function drawGrass(origin, x1, x2) {
 function drawBackground(){
     
     var gradient = ctx.createLinearGradient(0,0,0,LAYOUT_MAX_HEIGHT-10)
-    gradient.addColorStop(0,"blue")
-    gradient.addColorStop(1,"darkblue")
+    gradient.addColorStop(0,"lightblue")
+    gradient.addColorStop(1,"blue")
     ctx.fillStyle = gradient
     ctx.fillRect(LAYOUT_MIN_WIDTH, LAYOUT_MIN_HEIGHT, LAYOUT_MAX_WIDTH, LAYOUT_MAX_HEIGHT)
     
@@ -191,7 +199,7 @@ function clockTime(){
         var direction = osef[2]
 
         // draw the fish 
-        drawFish(fish["x"], fish["y"], direction) ;
+        drawFish(fish["x"], fish["y"], direction, fish["color"]) ;
     }
     // ctx.closePath() ;
 }
@@ -204,7 +212,8 @@ function addFish(){
     fishes.push({
         "x":250 ,
         "y":250 ,
-        "vector":getDirectionVector()
+        "vector":getDirectionVector(),
+        "color":FISH_COLORS[random(0, FISH_COLORS.length -1)]
     })
     document.getElementById("numberOfFish").value = fishes.length
 }
