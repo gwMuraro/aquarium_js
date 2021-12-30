@@ -103,10 +103,6 @@ function move(x, y, vector) {
 
 function initiateGame(){
     
-    // Loading the models : 
-    var nbFish =  [null, "", , "0", 0].includes(document.getElementById('numberOfFish').value) ? 1 : document.getElementById('numberOfFish').value
-    console.log(document.getElementById('numberOfFish').value)
-    
     updateFishNumber()
 
     // Getting canvas and doing the macro parameters 
@@ -136,8 +132,7 @@ function initiateGame(){
 
     // setting the buttons attribute 
     document.getElementById("play").hidden = true 
-    document.getElementById("stop").hidden = true 
-    document.getElementById("add").hidden =  true
+    
     
 }
 
