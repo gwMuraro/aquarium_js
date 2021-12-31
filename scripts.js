@@ -57,7 +57,7 @@ function getDirectionVector(forceDirection=null) {
             i += j ; 
         }
     }
-    return pile ;
+   return pile ;
 
 }
 
@@ -67,7 +67,7 @@ function deplacement(pixel) {
 
 function move(x, y, vector) {
     
-    if (vector.length == 0 ) {
+    if (vector.length == 0 ) {
         vector = getDirectionVector() ; 
     } 
     var direction = vector.pop() ;  ; 
@@ -136,7 +136,7 @@ function initiateGame(){
     
 }
 
-function drawFish(x, y, direction, color) {
+function drawFish(x, y, direction, color) {
     
     ctx.fillStyle = color ; 
    
